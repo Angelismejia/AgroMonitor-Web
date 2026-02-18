@@ -1,0 +1,246 @@
+﻿<!-- ============================================ -->
+<!-- Views/Sensor/Detalle.cshtml -->
+<!-- ============================================ -->
+@model AgroMonitor.Models.Sensor
+@{
+    ViewData["Title"] = "Detalle del Sensor";
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h2>📊 Detalle del Sensor</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Sensores</a></li>
+                <li class="breadcrumb-item active">@Model.IdentificadorExterno</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col text-end">
+        <a asp-action="Editar" asp-route-id="@Model.IdSensor" class="btn btn-primary">✏️ Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">↩️ Volver</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Información del Sensor -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📡 Información del Sensor</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th width="40%">Identificador:</th>
+                            <td><strong>@Model.IdentificadorExterno</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Tipo:</th>
+                            <td>
+                                @if (Model.TipoSensor == "humedad")
+                                {
+                                    <span class="badge bg-info">💧 Humedad</span>
+                                }
+                                else if (Model.TipoSensor == "temperatura")
+                                {
+                                    <span class="badge bg-warning">🌡️ Temperatura</span>
+                                }
+                                else if (Model.TipoSensor == "pH")
+                                {
+                                    <span class="badge bg-primary">⚗️ pH</span>
+                                }
+                                else if (Model.TipoSensor == "radiación")
+                                {
+                                    <span class="badge bg-danger">☀️ Radiación</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@Model.TipoSensor</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Modelo:</th>
+                            <td>@(Model.Modelo ?? "No especificado")</td>
+                        </tr>
+                        <tr>
+                            <th>Finca:</th>
+                            <td>@Model.Finca?.NombreFinca</td>
+                        </tr>
+                        <tr>
+                            <th>Ubicación:</th>
+                            <td>@(Model.UbicacionEnFinca ?? "No especificada")</td>
+                        </tr>
+                        <tr>
+                            <th>Estado:</th>
+                            <td>
+                                @if (Model.Estado == "activo")
+                                {
+                                    <span class="badge bg-success">✅ Activo</span>
+                                }
+                                else if (Model.Estado == "mantenimiento")
+                                {
+                                    <span class="badge bg-warning">🔧 Mantenimiento</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">❌ Inactivo</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Instalado:</th>
+                            <td>@Model.InstaladoEn.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                        <tr>
+                            <th>Último check:</th>
+                            <td>@(Model.UltimoCheck?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Recientes -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📈 Estadísticas Recientes</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Lecturas != null && Model.Lecturas.Any())
+                {
+                    var lecturas = Model.Lecturas.OrderByDescending(l => l.FechaHora).Take(10).ToList();
+                    var promedio = lecturas.Average(l => l.Valor);
+                    var maxima = lecturas.Max(l => l.Valor);
+                    var minima = lecturas.Min(l => l.Valor);
+
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">Promedio</small>
+                                <h4 class="mb-0 text-primary">@promedio.ToString("F2")</h4>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">Máxima</small>
+                                <h4 class="mb-0 text-danger">@maxima.ToString("F2")</h4>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-3">
+                                <small class="text-muted">Mínima</small>
+                                <h4 class="mb-0 text-info">@minima.ToString("F2")</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted mb-2"><small>Basado en las últimas @lecturas.Count lecturas</small></p>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No hay lecturas registradas aún
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Últimas Lecturas -->
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📊 Últimas 20 Lecturas</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Lecturas != null && Model.Lecturas.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Fecha y Hora</th>
+                                    <th>Valor</th>
+                                    <th>Observación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var lectura in Model.Lecturas.OrderByDescending(l => l.FechaHora).Take(20))
+                                {
+                                    <tr>
+                                        <td>@lectura.FechaHora.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                        <td>
+                                            <strong>@lectura.Valor.ToString("F2")</strong>
+                                            @if (Model.TipoSensor == "temperatura")
+                                            {
+                                                <span>°C</span>
+                                            }
+                                            else if (Model.TipoSensor == "humedad")
+                                            {
+                                                <span>%</span>
+                                            }
+                                            else if (Model.TipoSensor == "pH")
+                                            {
+                                                <span>pH</span>
+                                            }
+                                            else if (Model.TipoSensor == "radiación")
+                                            {
+                                                <span>W/m²</span>
+                                            }
+                                        </td>
+                                        <td class="text-muted">
+                                            @if (Model.TipoSensor == "temperatura")
+                                            {
+                                                if (lectura.Valor < 15)
+                                                {
+                                                    <span class="badge bg-info">Baja</span>
+                                                }
+                                                else if (lectura.Valor > 35)
+                                                {
+                                                    <span class="badge bg-danger">Alta</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">Normal</span>
+                                                }
+                                            }
+                                            else if (Model.TipoSensor == "humedad")
+                                            {
+                                                if (lectura.Valor < 30)
+                                                {
+                                                    <span class="badge bg-warning">Seco</span>
+                                                }
+                                                else if (lectura.Valor > 70)
+                                                {
+                                                    <span class="badge bg-info">Húmedo</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">Óptimo</span>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        No hay lecturas registradas para este sensor.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

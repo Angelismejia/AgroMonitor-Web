@@ -1,0 +1,186 @@
+﻿@{
+    ViewData["Title"] = "Dashboard Principal";
+}
+
+<style>
+    .stat-card {
+        background: white;
+        border: 2px solid #4a7c59;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(74, 124, 89, 0.3);
+    }
+
+    .stat-card h5 {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .stat-number {
+        font-size: 48px;
+        font-weight: 700;
+        color: #4a7c59;
+        margin: 10px 0;
+    }
+
+    .stat-card .btn {
+        margin-top: 10px;
+    }
+
+    .chart-card {
+        background: white;
+        border: 2px solid #4a7c59;
+        border-radius: 12px;
+        padding: 25px;
+    }
+
+    .chart-card h5 {
+        color: #4a7c59;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .chart-placeholder {
+        height: 300px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+    }
+
+    .alerts-card {
+        background: white;
+        border: 2px solid #4a7c59;
+        border-radius: 12px;
+        padding: 20px;
+        height: 100%;
+    }
+
+    .alerts-card h5 {
+        color: #4a7c59;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .alert-item {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+    }
+
+    .alert-item .badge {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .alert-danger-custom {
+        background-color: #fff5f5;
+        border-left: 3px solid #dc3545;
+    }
+
+    .alert-warning-custom {
+        background-color: #fffbf0;
+        border-left: 3px solid #ffc107;
+    }
+
+    .alert-success-custom {
+        background-color: #f0fff4;
+        border-left: 3px solid #28a745;
+    }
+</style>
+
+<!-- Tarjetas de estadísticas -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h5>Fincas registradas</h5>
+            <div class="stat-number">@ViewBag.TotalFincas</div>
+            <a asp-controller="Finca" asp-action="Index" class="btn btn-sm btn-success">Ver fincas</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h5>Cultivos activos</h5>
+            <div class="stat-number">@ViewBag.TotalCultivos</div>
+            <a asp-controller="Cultivo" asp-action="Index" class="btn btn-sm btn-success">Ver cultivos</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h5>Sensores activos</h5>
+            <div class="stat-number">@ViewBag.TotalSensores</div>
+            <a asp-controller="Sensor" asp-action="Index" class="btn btn-sm btn-success">Ver sensores</a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h5>Alertas</h5>
+            <div class="stat-number text-danger">@ViewBag.TotalAlertas</div>
+            <a asp-controller="Alerta" asp-action="Index" class="btn btn-sm btn-danger">Ver alertas</a>
+        </div>
+    </div>
+</div>
+
+<!-- Sección inferior: Gráfica y Alertas -->
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="chart-card">
+            <h5>📊 Condiciones promedio por cultivo</h5>
+            <div class="chart-placeholder">
+                <span>📈 Integrar gráficas de lecturas en versión final (Chart.js)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="alerts-card">
+            <h5>Alertas</h5>
+            
+            <div class="alert-item alert-danger-custom">
+                <span class="badge bg-danger"></span>
+                <div>
+                    <strong>Humedad baja - Finca A</strong><br>
+                    <small class="text-muted">Hace 2 horas</small>
+                </div>
+            </div>
+
+            <div class="alert-item alert-warning-custom">
+                <span class="badge bg-warning"></span>
+                <div>
+                    <strong>Temp. alta - Cultivo arroz</strong><br>
+                    <small class="text-muted">Hace 5 horas</small>
+                </div>
+            </div>
+
+            <div class="alert-item alert-success-custom">
+                <span class="badge bg-success"></span>
+                <div>
+                    <strong>Nuevo reporte disponible</strong><br>
+                    <small class="text-muted">Hace 1 día</small>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-controller="Alerta" asp-action="Index" class="btn btn-sm btn-outline-success">Ver todas las alertas</a>
+            </div>
+        </div>
+    </div>
+</div>

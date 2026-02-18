@@ -1,0 +1,68 @@
+﻿<!-- ============================================ -->
+<!-- Views/Cultivo/Editar.cshtml -->
+<!-- ============================================ -->
+@model AgroMonitor.Models.Cultivo
+@{
+    ViewData["Title"] = "Editar Cultivo";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">✏️ Editar cultivo</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Editar">
+                    <input type="hidden" asp-for="IdCultivo" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdFinca" class="form-label">Finca</label>
+                        <select asp-for="IdFinca" class="form-control" asp-items="ViewBag.Fincas">
+                        </select>
+                        <span asp-validation-for="IdFinca" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TipoCultivo" class="form-label">Tipo de cultivo</label>
+                        <select asp-for="TipoCultivo" class="form-control">
+                            <option value="arroz">🌾 Arroz</option>
+                            <option value="plátano">🍌 Plátano</option>
+                            <option value="cacao">🍫 Cacao</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FechaSiembra" class="form-label">Fecha de siembra</label>
+                            <input asp-for="FechaSiembra" class="form-control" type="date" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FechaCosechaEstimada" class="form-label">Fecha cosecha estimada</label>
+                            <input asp-for="FechaCosechaEstimada" class="form-control" type="date" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Estado" class="form-label">Estado</label>
+                        <select asp-for="Estado" class="form-control">
+                            <option value="activo">✅ Activo</option>
+                            <option value="inactivo">❌ Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">💾 Guardar cambios</button>
+                        <a asp-action="Index" class="btn btn-secondary">❌ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

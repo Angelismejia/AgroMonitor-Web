@@ -1,0 +1,556 @@
+﻿@model IEnumerable<AgroMonitor.Models.Alerta>
+@{
+    ViewData["Title"] = "Sistema de Alertas";
+    var prioridadFiltro = ViewBag.PrioridadFiltro as string;
+    var estadoFiltro = ViewBag.EstadoFiltro as string;
+}
+
+<style>
+    .alert-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+        cursor: pointer;
+    }
+
+        .alert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+    .alert-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+
+    .alert-number {
+        font-size: 36px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .alert-label {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .card-alta {
+        border-left: 5px solid #dc3545;
+    }
+
+    .card-media {
+        border-left: 5px solid #ffc107;
+    }
+
+    .card-baja {
+        border-left: 5px solid #17a2b8;
+    }
+
+    .card-atendida {
+        border-left: 5px solid #28a745;
+    }
+
+    .num-alta {
+        color: #dc3545;
+    }
+
+    .num-media {
+        color: #ffc107;
+    }
+
+    .num-baja {
+        color: #17a2b8;
+    }
+
+    .num-atendida {
+        color: #28a745;
+    }
+
+    .filter-section {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .alert-table {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .alert-row {
+        transition: all 0.3s;
+    }
+
+        .alert-row:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+    .alert-row-alta {
+        border-left: 4px solid #dc3545;
+    }
+
+    .alert-row-media {
+        border-left: 4px solid #ffc107;
+    }
+
+    .alert-row-baja {
+        border-left: 4px solid #17a2b8;
+    }
+
+    .tipo-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .badge-humedad {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .badge-temperatura {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-ph {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .badge-plaga {
+        background: #d6d8db;
+        color: #383d41;
+    }
+
+    .action-btn {
+        padding: 5px 15px;
+        border: none;
+        border-radius: 5px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-atender {
+        background: #28a745;
+        color: white;
+    }
+
+        .btn-atender:hover {
+            background: #218838;
+        }
+
+    .btn-eliminar {
+        background: #dc3545;
+        color: white;
+    }
+
+        .btn-eliminar:hover {
+            background: #c82333;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .empty-state-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>🚨 Sistema de Alertas Automáticas</h2>
+        <p class="text-muted">Monitorea alertas críticas y notificaciones de tus cultivos</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <button onclick="generarAlertas()" class="btn btn-warning btn-lg">
+            ⚡ Generar Alertas Automáticas
+        </button>
+    </div>
+</div>
+
+<!-- Tarjetas de Resumen -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="alert-card card-alta" onclick="filtrarPrioridad('alta')">
+            <div class="text-center">
+                <div class="alert-icon">🔴</div>
+                <div class="alert-number num-alta">@Model.Count(a => a.NivelPrioridad == "alta" && a.Estado == "pendiente")</div>
+                <div class="alert-label">Alta Prioridad</div>
+                <small class="text-muted">Requiere atención inmediata</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="alert-card card-media" onclick="filtrarPrioridad('media')">
+            <div class="text-center">
+                <div class="alert-icon">🟡</div>
+                <div class="alert-number num-media">@Model.Count(a => a.NivelPrioridad == "media" && a.Estado == "pendiente")</div>
+                <div class="alert-label">Media Prioridad</div>
+                <small class="text-muted">Atención necesaria</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="alert-card card-baja" onclick="filtrarPrioridad('baja')">
+            <div class="text-center">
+                <div class="alert-icon">🔵</div>
+                <div class="alert-number num-baja">@Model.Count(a => a.NivelPrioridad == "baja" && a.Estado == "pendiente")</div>
+                <div class="alert-label">Baja Prioridad</div>
+                <small class="text-muted">Para revisión</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="alert-card card-atendida" onclick="filtrarEstado('atendida')">
+            <div class="text-center">
+                <div class="alert-icon">✅</div>
+                <div class="alert-number num-atendida">@Model.Count(a => a.Estado == "atendida")</div>
+                <div class="alert-label">Atendidas</div>
+                <small class="text-muted">Resueltas exitosamente</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Filtros -->
+<div class="filter-section">
+    <h5 class="mb-3">🔍 Filtros</h5>
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Prioridad</label>
+            <select name="prioridad" class="form-control" onchange="this.form.submit()">
+                <option value="">Todas las prioridades</option>
+                <option value="alta" selected="@(prioridadFiltro == "alta")">🔴 Alta</option>
+                <option value="media" selected="@(prioridadFiltro == "media")">🟡 Media</option>
+                <option value="baja" selected="@(prioridadFiltro == "baja")">🔵 Baja</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Estado</label>
+            <select name="estado" class="form-control" onchange="this.form.submit()">
+                <option value="">Todos los estados</option>
+                <option value="pendiente" selected="@(estadoFiltro == "pendiente")">⏳ Pendiente</option>
+                <option value="atendida" selected="@(estadoFiltro == "atendida")">✅ Atendida</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">&nbsp;</label>
+            <div class="d-grid gap-2">
+                @if (!string.IsNullOrEmpty(prioridadFiltro) || !string.IsNullOrEmpty(estadoFiltro))
+                {
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                        🔄 Limpiar Filtros
+                    </a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-secondary" disabled>
+                        Filtros activos: 0
+                    </button>
+                }
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Tabla de Alertas -->
+<div class="alert-table">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">📋 Lista de Alertas (@Model.Count())</h5>
+        @if (Model.Any(a => a.Estado == "pendiente"))
+        {
+            <button onclick="marcarTodasAtendidas()" class="btn btn-sm btn-success">
+                ✅ Marcar todas como atendidas
+            </button>
+        }
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>🏷️ Tipo</th>
+                        <th>📝 Descripción</th>
+                        <th>📍 Ubicación</th>
+                        <th>⚠️ Prioridad</th>
+                        <th>🕐 Fecha</th>
+                        <th>📊 Estado</th>
+                        <th>⚙️ Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var alerta in Model)
+                    {
+                        var rowClass = alerta.Estado == "pendiente"
+                        ? (alerta.NivelPrioridad == "alta" ? "alert-row-alta"
+                        : alerta.NivelPrioridad == "media" ? "alert-row-media"
+                        : "alert-row-baja")
+                        : "";
+
+                        var tipoBadgeClass = alerta.TipoAlerta?.ToLower() switch
+                        {
+                            var t when t.Contains("humedad") => "badge-humedad",
+                            var t when t.Contains("temperatura") => "badge-temperatura",
+                            var t when t.Contains("ph") => "badge-ph",
+                            var t when t.Contains("plaga") => "badge-plaga",
+                            _ => "badge-secondary"
+                        };
+
+                        var tipoIcono = alerta.TipoAlerta?.ToLower() switch
+                        {
+                            var t when t.Contains("humedad") => "💧",
+                            var t when t.Contains("temperatura") => "🌡️",
+                            var t when t.Contains("ph") => "⚗️",
+                            var t when t.Contains("plaga") => "🐛",
+                            _ => "⚠️"
+                        };
+
+                        <tr class="alert-row @rowClass">
+                            <td>
+                                <span class="tipo-badge @tipoBadgeClass">
+                                    @tipoIcono @alerta.TipoAlerta?.Replace("_", " ")
+                                </span>
+                            </td>
+                            <td>
+                                <strong>@alerta.Descripcion</strong>
+                            </td>
+                            <td>
+                                <div><strong>@alerta.Finca?.NombreFinca</strong></div>
+                                <small class="text-muted">
+                                    🌾 @alerta.Cultivo?.TipoCultivo
+                                </small>
+                            </td>
+                            <td>
+                                @if (alerta.NivelPrioridad == "alta")
+                                {
+                                    <span class="badge bg-danger">🔴 Alta</span>
+                                }
+                                else if (alerta.NivelPrioridad == "media")
+                                {
+                                    <span class="badge bg-warning text-dark">🟡 Media</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info">🔵 Baja</span>
+                                }
+                            </td>
+                            <td>
+                                <div>@alerta.FechaGenerada.ToString("dd/MM/yyyy")</div>
+                                <small class="text-muted">@alerta.FechaGenerada.ToString("HH:mm:ss")</small>
+                            </td>
+                            <td>
+                                @if (alerta.Estado == "pendiente")
+                                {
+                                    <span class="badge bg-warning text-dark">⏳ Pendiente</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">✅ Atendida</span>
+                                }
+                            </td>
+                            <td>
+                                @if (alerta.Estado == "pendiente")
+                                {
+                                    <button onclick="marcarAtendida(@alerta.IdAlerta)" class="action-btn btn-atender me-1">
+                                        ✔️ Atender
+                                    </button>
+                                    <button onclick="eliminarAlerta(@alerta.IdAlerta)" class="action-btn btn-eliminar">
+                                        🗑️ Eliminar
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button onclick="eliminarAlerta(@alerta.IdAlerta)" class="action-btn btn-eliminar">
+                                        🗑️ Eliminar
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h4>No hay alertas disponibles</h4>
+            <p class="text-muted">
+                @if (!string.IsNullOrEmpty(prioridadFiltro) || !string.IsNullOrEmpty(estadoFiltro))
+                {
+                    <span>No se encontraron alertas con los filtros aplicados.</span>
+                }
+                else
+                {
+                    <span>
+                        Cuando se generen alertas automáticas, aparecerán aquí.<br>
+                        Usa el botón "Generar Alertas Automáticas" para crear alertas basadas en las lecturas de tus sensores.
+                    </span>
+                }
+            </p>
+            @if (!string.IsNullOrEmpty(prioridadFiltro) || !string.IsNullOrEmpty(estadoFiltro))
+            {
+                <a href="@Url.Action("Index")" class="btn btn-primary mt-3">
+                    Ver todas las alertas
+                </a>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarPrioridad(prioridad) {
+            window.location.href = '@Url.Action("Index")?prioridad=' + prioridad;
+        }
+
+        function filtrarEstado(estado) {
+            window.location.href = '@Url.Action("Index")?estado=' + estado;
+        }
+
+        function generarAlertas() {
+            if (!confirm('¿Deseas generar alertas automáticas basadas en las lecturas de sensores?')) return;
+
+            // Mostrar loading
+            const btnOriginal = event.target.innerHTML;
+            event.target.innerHTML = '⏳ Generando...';
+            event.target.disabled = true;
+
+            fetch('@Url.Action("GenerarAlertas", "Alerta")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    location.reload();
+                } else {
+                    alert('❌ Error: ' + data.message);
+                    event.target.innerHTML = btnOriginal;
+                    event.target.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Error al generar alertas. Verifica que tengas sensores activos con lecturas.');
+                event.target.innerHTML = btnOriginal;
+                event.target.disabled = false;
+            });
+        }
+
+        function marcarAtendida(id) {
+            if (!confirm('¿Marcar esta alerta como atendida?')) return;
+
+            fetch('@Url.Action("MarcarAtendida", "Alerta")?id=' + id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error en la respuesta');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    location.reload();
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Error al marcar como atendida');
+            });
+        }
+
+        function eliminarAlerta(id) {
+            if (!confirm('¿Estás seguro de eliminar esta alerta?')) return;
+
+            fetch('@Url.Action("Eliminar", "Alerta")?id=' + id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Error en la respuesta');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    location.reload();
+                } else {
+                    alert('❌ Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Error al eliminar la alerta');
+            });
+        }
+
+        function marcarTodasAtendidas() {
+            if (!confirm('¿Marcar TODAS las alertas pendientes como atendidas?')) return;
+
+            let alertasPendientes = @Html.Raw(Json.Serialize(Model.Where(a => a.Estado == "pendiente").Select(a => a.IdAlerta)));
+
+            if (alertasPendientes.length === 0) {
+                alert('No hay alertas pendientes');
+                return;
+            }
+
+            let promesas = alertasPendientes.map(id =>
+                fetch('@Url.Action("MarcarAtendida", "Alerta")?id=' + id, { method: 'POST' })
+                    .then(r => r.json())
+            );
+
+            Promise.all(promesas)
+                .then(resultados => {
+                    const exitosos = resultados.filter(r => r.success).length;
+                    alert(`✅ ${exitosos} alertas marcadas como atendidas`);
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Error al marcar algunas alertas');
+                    location.reload();
+                });
+        }
+    </script>
+
+    @functions {
+    public string GetAntiforgeryToken()
+    {
+        return string.Empty; // Placeholder - ASP.NET Core maneja esto automáticamente
+    }
+    }
+}

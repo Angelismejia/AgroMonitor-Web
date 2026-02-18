@@ -1,0 +1,106 @@
+﻿<!-- ============================================ -->
+<!-- Views/Sensor/Index.cshtml -->
+<!-- ============================================ -->
+@model IEnumerable<AgroMonitor.Models.Sensor>
+@{
+    ViewData["Title"] = "Gestión de Sensores IoT";
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h2>📡 Gestión de Sensores IoT</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">Sensores</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col text-end">
+        <a asp-action="Crear" class="btn btn-success">➕ Nuevo sensor</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Identificador</th>
+                        <th>Tipo de sensor</th>
+                        <th>Finca</th>
+                        <th>Ubicación en finca</th>
+                        <th>Modelo</th>
+                        <th>Estado</th>
+                        <th>Último check</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                No hay sensores registrados.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var sensor in Model)
+                        {
+                            <tr>
+                                <td><strong>@sensor.IdentificadorExterno</strong></td>
+                                <td>
+                                    @if (sensor.TipoSensor == "humedad")
+                                    {
+                                        <span class="badge bg-info">💧 Humedad</span>
+                                    }
+                                    else if (sensor.TipoSensor == "temperatura")
+                                    {
+                                        <span class="badge bg-warning">🌡️ Temperatura</span>
+                                    }
+                                    else if (sensor.TipoSensor == "pH")
+                                    {
+                                        <span class="badge bg-primary">⚗️ pH</span>
+                                    }
+                                    else if (sensor.TipoSensor == "radiación")
+                                    {
+                                        <span class="badge bg-danger">☀️ Radiación</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@sensor.TipoSensor</span>
+                                    }
+                                </td>
+                                <td>@sensor.Finca?.NombreFinca</td>
+                                <td>@(sensor.UbicacionEnFinca ?? "No especificada")</td>
+                                <td>@(sensor.Modelo ?? "N/A")</td>
+                                <td>
+                                    @if (sensor.Estado == "activo")
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else if (sensor.Estado == "mantenimiento")
+                                    {
+                                        <span class="badge bg-warning">Mantenimiento</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+                                <td>@(sensor.UltimoCheck?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+                                <td>
+                                    <a asp-action="Detalle" asp-route-id="@sensor.IdSensor" class="btn btn-sm btn-info">📊 Ver</a>
+                                    <a asp-action="Editar" asp-route-id="@sensor.IdSensor" class="btn btn-sm btn-primary">✏️ Editar</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

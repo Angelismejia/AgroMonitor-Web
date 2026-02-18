@@ -1,0 +1,90 @@
+﻿<!-- ============================================ -->
+<!-- Views/Sensor/Editar.cshtml -->
+<!-- ============================================ -->
+@model AgroMonitor.Models.Sensor
+@{
+    ViewData["Title"] = "Editar Sensor";
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h2>✏️ Editar Sensor</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index">Sensores</a></li>
+                <li class="breadcrumb-item active">Editar</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">✏️ Editar sensor: @Model.IdentificadorExterno</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Editar">
+                    <input type="hidden" asp-for="IdSensor" />
+                    <input type="hidden" asp-for="InstaladoEn" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdFinca" class="form-label">Finca</label>
+                        <select asp-for="IdFinca" class="form-control" asp-items="ViewBag.Fincas">
+                        </select>
+                        <span asp-validation-for="IdFinca" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdentificadorExterno" class="form-label">Identificador / Serial del sensor</label>
+                        <input asp-for="IdentificadorExterno" class="form-control" />
+                        <span asp-validation-for="IdentificadorExterno" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TipoSensor" class="form-label">Tipo de sensor</label>
+                            <select asp-for="TipoSensor" class="form-control">
+                                <option value="humedad">💧 Humedad del suelo</option>
+                                <option value="temperatura">🌡️ Temperatura ambiental</option>
+                                <option value="pH">⚗️ pH del suelo</option>
+                                <option value="radiación">☀️ Radiación solar</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Modelo" class="form-label">Modelo</label>
+                            <input asp-for="Modelo" class="form-control" placeholder="DHT22, ESP32, etc." />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UbicacionEnFinca" class="form-label">Ubicación dentro de la finca</label>
+                        <input asp-for="UbicacionEnFinca" class="form-control" placeholder="Lote Norte, Zona de Riego B, etc." />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Estado" class="form-label">Estado</label>
+                        <select asp-for="Estado" class="form-control">
+                            <option value="activo">✅ Activo</option>
+                            <option value="mantenimiento">🔧 Mantenimiento</option>
+                            <option value="inactivo">❌ Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">💾 Guardar cambios</button>
+                        <a asp-action="Index" class="btn btn-secondary">❌ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

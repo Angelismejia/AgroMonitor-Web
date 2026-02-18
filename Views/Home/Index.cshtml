@@ -1,0 +1,157 @@
+﻿<!-- Views/Home/Index.cshtml -->
+@{
+    ViewData["Title"] = "Login / Registro";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroMonitor - Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #4a7c59 0%, #2e5d3f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .login-header h2 {
+                color: #4a7c59;
+                font-weight: 700;
+                margin-top: 15px;
+            }
+
+        .logo {
+            font-size: 60px;
+        }
+
+        .btn-custom {
+            background-color: #4a7c59;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            border: none;
+        }
+
+            .btn-custom:hover {
+                background-color: #2e5d3f;
+                color: white;
+            }
+
+        .form-control {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+            .form-control:focus {
+                border-color: #4a7c59;
+                box-shadow: 0 0 0 0.2rem rgba(74, 124, 89, 0.25);
+            }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+        }
+
+        .alert {
+            border-radius: 8px;
+        }
+
+        /* Redes sociales */
+        .social-section {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .social-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .social-icons a {
+            font-size: 24px;
+            margin: 0 10px;
+            color: #4a7c59;
+            transition: all 0.3s ease;
+        }
+
+            .social-icons a:hover {
+                color: #2e5d3f;
+                transform: scale(1.2);
+            }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">🌱</div>
+            <h2>AgroMonitor</h2>
+            <p class="text-muted">Monitoreo inteligente de cultivos</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <form method="post" asp-action="Login">
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" name="correo" placeholder="ejemplo@correo.com" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control" name="contraseña" placeholder="********" required />
+            </div>
+            <button type="submit" class="btn btn-custom">Entrar</button>
+        </form>
+
+        <div class="divider">
+            <span>¿No tienes cuenta?</span>
+        </div>
+
+        <a href="@Url.Action("Register", "Home")" class="btn btn-outline-success w-100">Crear cuenta nueva</a>
+
+        <!-- Redes Sociales -->
+        <div class="social-section">
+            <div class="social-title">Síguenos en nuestras redes</div>
+            <div class="social-icons">
+                <a href="#" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" title="Twitter/X"><i class="bi bi-twitter"></i></a>
+                <a href="#" title="YouTube"><i class="bi bi-youtube"></i></a>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

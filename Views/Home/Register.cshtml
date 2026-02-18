@@ -1,0 +1,119 @@
+﻿<!-- ============================================== -->
+<!-- Views/Home/Register.cshtml -->
+<!-- ============================================== -->
+@model AgroMonitor.Models.Usuario
+@{
+    ViewData["Title"] = "Registro";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroMonitor - Registro</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #4a7c59 0%, #2e5d3f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+            .register-header h2 {
+                color: #4a7c59;
+                font-weight: 700;
+            }
+
+        .btn-custom {
+            background-color: #4a7c59;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            width: 100%;
+        }
+
+            .btn-custom:hover {
+                background-color: #2e5d3f;
+                color: white;
+            }
+
+        .form-control {
+            padding: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h2>🌱 Crear Cuenta</h2>
+            <p class="text-muted">Regístrate en AgroMonitor</p>
+        </div>
+
+        <form method="post" asp-action="Register">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Nombre" class="form-label">Nombre</label>
+                    <input asp-for="Nombre" class="form-control" required />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Apellido" class="form-label">Apellido</label>
+                    <input asp-for="Apellido" class="form-control" required />
+                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Correo" class="form-label">Correo electrónico</label>
+                <input asp-for="Correo" class="form-control" type="email" required />
+                <span asp-validation-for="Correo" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ContraseñaHash" class="form-label">Contraseña</label>
+                <input asp-for="ContraseñaHash" class="form-control" type="password" required />
+                <span asp-validation-for="ContraseñaHash" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Telefono" class="form-label">Teléfono (opcional)</label>
+                <input asp-for="Telefono" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Rol" class="form-label">Rol</label>
+                <select asp-for="Rol" class="form-control">
+                    <option value="productor">Productor</option>
+                    <option value="técnico">Técnico</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-custom">Registrarse</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="@Url.Action("Index", "Home")" class="text-decoration-none">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

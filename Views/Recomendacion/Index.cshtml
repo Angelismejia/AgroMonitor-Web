@@ -1,0 +1,73 @@
+﻿<!-- ============================================ -->
+<!-- Views/Recomendacion/Index.cshtml -->
+<!-- ============================================ -->
+@model IEnumerable<AgroMonitor.Models.RecomendacionML>
+@{
+    ViewData["Title"] = "Recomendaciones ML y Reportes";
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h2>🤖 Recomendaciones ML y Reportes</h2>
+    </div>
+    <div class="col text-end">
+        <a asp-action="GenerarAuto" class="btn btn-success">🧠 Simular ML</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🧠 Recomendaciones generadas por ML</h5>
+            </div>
+            <div class="card-body">
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info">
+                        No hay recomendaciones generadas aún. Haz clic en "Simular ML" para generar una.
+                    </div>
+                }
+                else
+                {
+                    @foreach (var rec in Model)
+                    {
+                        <div class="card mb-3 border-start border-5 @(rec.TipoRecomendacion == "riego" ? "border-primary" : rec.TipoRecomendacion == "fertilizante" ? "border-success" : "border-danger")">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <h6>
+                                            @if (rec.TipoRecomendacion == "riego")
+                                            {
+                                                <span>💧 Riego</span>
+                                            }
+                                            else if (rec.TipoRecomendacion == "fertilizante")
+                                            {
+                                                <span>🌱 Fertilización</span>
+                                            }
+                                            else
+                                            {
+                                                <span>🐛 Plaga</span>
+                                            }
+                                        </h6>
+                                        <p class="mb-1"><strong>Cultivo:</strong> @rec.Cultivo?.TipoCultivo - @rec.Cultivo?.Finca?.NombreFinca</p>
+                                        <p class="mb-1"><strong>Descripción:</strong> @rec.Descripcion</p>
+                                        <small class="text-muted">Confianza: @rec.Confianza.ToString("0.##")% | Generado: @rec.FechaGenerada.ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="text-center">
+                                            <div class="display-6 @(rec.Confianza >= 80 ? "text-success" : rec.Confianza >= 60 ? "text-warning" : "text-danger")">
+                                                @rec.Confianza.ToString("0")%
+                                            </div>
+                                            <small>Confianza</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

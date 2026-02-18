@@ -1,0 +1,81 @@
+﻿<!-- ============================================ -->
+<!-- Views/Cultivo/Index.cshtml -->
+<!-- ============================================ -->
+@model IEnumerable<AgroMonitor.Models.Cultivo>
+@{
+    ViewData["Title"] = "Gestión de Cultivos";
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h2>🌾 Gestión de Cultivos</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">Cultivos</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col text-end">
+        <a asp-action="Crear" class="btn btn-success">➕ Nuevo cultivo</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Finca</th>
+                        <th>Tipo de cultivo</th>
+                        <th>Fecha siembra</th>
+                        <th>Fecha cosecha estimada</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No hay cultivos registrados.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var cultivo in Model)
+                        {
+                            <tr>
+                                <td>@cultivo.Finca?.NombreFinca</td>
+                                <td>
+                                    <span class="badge bg-secondary">@cultivo.TipoCultivo</span>
+                                </td>
+                                <td>@cultivo.FechaSiembra.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @(cultivo.FechaCosechaEstimada?.ToString("dd/MM/yyyy") ?? "No definida")
+                                </td>
+                                <td>
+                                    @if (cultivo.Estado == "activo")
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Editar" asp-route-id="@cultivo.IdCultivo" class="btn btn-sm btn-primary">✏️ Editar</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

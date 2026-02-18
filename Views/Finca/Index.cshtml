@@ -1,0 +1,62 @@
+﻿@model IEnumerable<AgroMonitor.Models.Finca>
+@{
+    ViewData["Title"] = "Gestión de Fincas";
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h2>🏞️ Gestión de Fincas</h2>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">Fincas</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col text-end">
+        <a asp-action="Crear" class="btn btn-success">➕ Nueva finca</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre de finca</th>
+                        <th>Ubicación</th>
+                        <th>Área (tareas)</th>
+                        <th>Productor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No hay fincas registradas. Haz clic en "Nueva finca" para crear una.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var finca in Model)
+                        {
+                            <tr>
+                                <td><strong>@finca.NombreFinca</strong></td>
+                                <td>@finca.UbicacionText</td>
+                                <td>@finca.AreaTareas</td>
+                                <td>@finca.Usuario?.Nombre @finca.Usuario?.Apellido</td>
+                                <td>
+                                    <a asp-action="Editar" asp-route-id="@finca.IdFinca" class="btn btn-sm btn-primary">✏️ Editar</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

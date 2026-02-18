@@ -1,0 +1,62 @@
+﻿@model AgroMonitor.Models.Finca
+@{
+    ViewData["Title"] = "Nueva Finca";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🏞️ Registrar nueva finca</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Crear">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="NombreFinca" class="form-label">Nombre de la finca</label>
+                        <input asp-for="NombreFinca" class="form-control" placeholder="Ej: Finca El Paraíso" required />
+                        <span asp-validation-for="NombreFinca" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UbicacionText" class="form-label">Ubicación</label>
+                        <input asp-for="UbicacionText" class="form-control" placeholder="Ej: San Francisco de Macorís, Duarte" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Latitud" class="form-label">Latitud</label>
+                            <input asp-for="Latitud" class="form-control" type="number" step="0.000001" placeholder="19.3008" />
+                            <small class="text-muted">Coordenada GPS</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Longitud" class="form-label">Longitud</label>
+                            <input asp-for="Longitud" class="form-control" type="number" step="0.000001" placeholder="-70.2527" />
+                            <small class="text-muted">Coordenada GPS</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="AreaTareas" class="form-label">Área (tareas)</label>
+                            <input asp-for="AreaTareas" class="form-control" type="number" step="0.01" placeholder="100" required />
+                            <span asp-validation-for="AreaTareas" class="text-danger"></span>
+                            <small class="text-muted">1 tarea ≈ 628.86 m²</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>💡 Nota:</strong> Las coordenadas GPS son opcionales pero te permitirán visualizar tu finca en un mapa.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">💾 Guardar finca</button>
+                        <a asp-action="Index" class="btn btn-secondary">❌ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

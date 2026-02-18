@@ -1,0 +1,76 @@
+<!-- ============================================== -->
+<!-- Views/Sensor/Crear.cshtml (Versión mejorada y profesional) -->
+<!-- ============================================== -->
+@model AgroMonitor.Models.Sensor
+@{
+    ViewData["Title"] = "Registrar Sensor IoT";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-primary text-white rounded-top-3">
+                <h5 class="mb-0">Registrar nuevo sensor IoT</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Crear">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdFinca" class="form-label fw-semibold">Finca</label>
+                        <select asp-for="IdFinca" class="form-select" asp-items="ViewBag.Fincas">
+                            <option value="">-- Seleccionar finca --</option>
+                        </select>
+                        <span asp-validation-for="IdFinca" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdentificadorExterno" class="form-label fw-semibold">Identificador / Serial del sensor</label>
+                        <input asp-for="IdentificadorExterno" class="form-control" placeholder="S-001 o MAC Address" />
+                        <span asp-validation-for="IdentificadorExterno" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TipoSensor" class="form-label fw-semibold">Tipo de sensor</label>
+                            <select asp-for="TipoSensor" class="form-select">
+                                <option value="humedad">Humedad del suelo</option>
+                                <option value="temperatura">Temperatura ambiental</option>
+                                <option value="pH">pH del suelo</option>
+                                <option value="radiación">Radiación solar</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Modelo" class="form-label fw-semibold">Modelo</label>
+                            <input asp-for="Modelo" class="form-control" placeholder="DHT22, ESP32, etc." />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UbicacionEnFinca" class="form-label fw-semibold">Ubicación dentro de la finca</label>
+                        <input asp-for="UbicacionEnFinca" class="form-control" placeholder="Lote Norte, Zona de Riego B, etc." />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Estado" class="form-label fw-semibold">Estado inicial</label>
+                        <select asp-for="Estado" class="form-select">
+                            <option value="activo">Activo</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <button type="submit" class="btn btn-success px-4">Registrar sensor</button>
+                        <a asp-action="Index" class="btn btn-secondary px-4">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

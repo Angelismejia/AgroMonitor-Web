@@ -1,0 +1,74 @@
+﻿@model AgroMonitor.Models.Cultivo
+@{
+    ViewData["Title"] = "Nuevo Cultivo";
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">🌾 Registrar nuevo cultivo</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-action="Crear">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdFinca" class="form-label">Finca *</label>
+                        <select asp-for="IdFinca" class="form-control" asp-items="ViewBag.Fincas" required>
+                            <option value="">-- Seleccionar finca --</option>
+                        </select>
+                        <span asp-validation-for="IdFinca" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="TipoCultivo" class="form-label">Tipo de cultivo *</label>
+                        <select asp-for="TipoCultivo" class="form-control" required>
+                            <option value="">-- Seleccionar tipo --</option>
+                            <option value="arroz">🌾 Arroz</option>
+                            <option value="platano">🍌 Plátano</option>
+                            <option value="cacao">🍫 Cacao</option>
+                            <option value="cafe">☕ Café</option>
+                            <option value="yuca">🥔 Yuca</option>
+                        </select>
+                        <span asp-validation-for="TipoCultivo" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FechaSiembra" class="form-label">Fecha de siembra *</label>
+                            <input asp-for="FechaSiembra" class="form-control" type="date" required />
+                            <span asp-validation-for="FechaSiembra" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FechaCosechaEstimada" class="form-label">Fecha cosecha estimada</label>
+                            <input asp-for="FechaCosechaEstimada" class="form-control" type="date" />
+                            <small class="text-muted">Opcional</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Estado" class="form-label">Estado</label>
+                        <select asp-for="Estado" class="form-control">
+                            <option value="activo">✅ Activo</option>
+                            <option value="inactivo">❌ Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>💡 Nota:</strong> Asegúrate de tener al menos una finca registrada antes de crear un cultivo.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">💾 Guardar cultivo</button>
+                        <a asp-action="Index" class="btn btn-secondary">❌ Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

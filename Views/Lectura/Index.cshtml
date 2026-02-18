@@ -1,0 +1,418 @@
+﻿@model IEnumerable<AgroMonitor.Models.LecturaSensor>
+@{
+    ViewData["Title"] = "Lecturas en Tiempo Real";
+    var sensores = ViewBag.Sensores as IEnumerable<AgroMonitor.Models.Sensor>;
+    var sensorSeleccionado = ViewBag.SensorSeleccionado as int?;
+}
+
+<style>
+    .stats-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .stats-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+    }
+
+    .stats-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #4a7c59;
+    }
+
+    .stats-label {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .sensor-badge {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin: 5px;
+    }
+
+    .badge-humedad {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .badge-temperatura {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-ph {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .badge-luz {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-default {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+
+    .lectura-row {
+        transition: background 0.3s;
+    }
+
+        .lectura-row:hover {
+            background: #f8f9fa;
+        }
+
+    .valor-critico {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .valor-normal {
+        color: #28a745;
+        font-weight: bold;
+    }
+
+    .valor-advertencia {
+        color: #ffc107;
+        font-weight: bold;
+    }
+</style>
+
+<div class="row mb-4">
+    <div class="col">
+        <h2>📊 Monitoreo en Tiempo Real</h2>
+        <p class="text-muted">Visualiza y gestiona las lecturas de tus sensores IoT</p>
+    </div>
+</div>
+
+@if (sensorSeleccionado.HasValue)
+{
+    var sensor = sensores?.FirstOrDefault(s => s.IdSensor == sensorSeleccionado.Value);
+    if (sensor != null)
+    {
+        var ultimaLectura = Model.FirstOrDefault();
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">📡</div>
+                    <div class="stats-label">Sensor Activo</div>
+                    <div class="stats-value" style="font-size: 20px;">@sensor.IdentificadorExterno</div>
+                    <small class="text-muted">@sensor.TipoSensor</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">📍</div>
+                    <div class="stats-label">Ubicación</div>
+                    <div class="stats-value" style="font-size: 18px;">@sensor.Finca?.NombreFinca</div>
+                    <small class="text-muted">@sensor.Finca?.UbicacionText</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">📈</div>
+                    <div class="stats-label">Última Lectura</div>
+                    <div class="stats-value">
+                        @if (ultimaLectura != null)
+                        {
+                            @ultimaLectura.Valor.ToString("0.##") @ultimaLectura.Unidad
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                    </div>
+                    <small class="text-muted">
+                        @if (ultimaLectura != null)
+                        {
+                            @ultimaLectura.FechaHora.ToString("HH:mm:ss")
+                        }
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card text-center">
+                    <div class="stats-icon">🔢</div>
+                    <div class="stats-label">Total Lecturas</div>
+                    <div class="stats-value">@Model.Count()</div>
+                    <small class="text-muted">últimas 50</small>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <div class="chart-container">
+            <h5 class="mb-3">🔍 Filtrar por Sensor</h5>
+            <form method="get" class="row g-3">
+                <div class="col-md-9">
+                    <select name="sensorId" class="form-control" onchange="this.form.submit()">
+                        <option value="">🌐 Todos los sensores</option>
+                        @foreach (var s in sensores ?? Enumerable.Empty<AgroMonitor.Models.Sensor>())
+                        {
+                            var badgeClass = s.TipoSensor.ToLower() switch
+                            {
+                                "humedad" => "badge-humedad",
+                                "temperatura" => "badge-temperatura",
+                                "ph" => "badge-ph",
+                                "luz" => "badge-luz",
+                                _ => "badge-default"
+                            };
+                            <option value="@s.IdSensor" selected="@(sensorSeleccionado == s.IdSensor)">
+                                @s.IdentificadorExterno - @s.TipoSensor (@s.Finca?.NombreFinca)
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    @if (sensorSeleccionado.HasValue)
+                    {
+                        <a href="@Url.Action("Index", "Lectura")" class="btn btn-secondary w-100">
+                            🔄 Ver Todos
+                        </a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="chart-container text-center">
+            @if (sensorSeleccionado.HasValue)
+            {
+                <h5 class="mb-3">⚡ Acciones Rápidas</h5>
+                <form method="post" asp-controller="Lectura" asp-action="SimularLectura" asp-route-sensorId="@sensorSeleccionado">
+                    <button type="submit" class="btn btn-warning btn-lg w-100">
+                        ⚡ Simular Nueva Lectura
+                    </button>
+                </form>
+                <small class="text-muted d-block mt-2">Genera una lectura de prueba</small>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    <strong>ℹ️ Selecciona un sensor</strong><br>
+                    <small>Para simular lecturas y ver estadísticas detalladas</small>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (sensorSeleccionado.HasValue && Model.Any())
+{
+    <div class="chart-container">
+        <h5 class="mb-3">📈 Gráfico de Tendencias (Últimas 24 horas)</h5>
+        <canvas id="chartLecturas" style="height: 300px;"></canvas>
+    </div>
+}
+
+<div class="chart-container">
+    <h5 class="mb-3">🗂️ Historial de Lecturas</h5>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>🕐 Fecha y Hora</th>
+                        <th>📡 Sensor</th>
+                        <th>🏷️ Tipo</th>
+                        <th>📊 Valor</th>
+                        <th>📏 Unidad</th>
+                        <th>🤖 Procesado ML</th>
+                        <th>⚠️ Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var lectura in Model)
+                    {
+                        var tipoSensor = lectura.Sensor?.TipoSensor?.ToLower() ?? "";
+                        var valorClase = "valor-normal";
+                        var estadoIcono = "✅";
+                        var estadoTexto = "Normal";
+
+                        // Determinar estado según tipo y valor
+                        if (tipoSensor == "humedad" && lectura.Valor < 30)
+                        {
+                            valorClase = "valor-critico";
+                            estadoIcono = "🔴";
+                            estadoTexto = "Crítico";
+                        }
+                        else if (tipoSensor == "temperatura" && lectura.Valor > 35)
+                        {
+                            valorClase = "valor-critico";
+                            estadoIcono = "🔴";
+                            estadoTexto = "Muy Alto";
+                        }
+                        else if (tipoSensor == "ph" && (lectura.Valor < 5.5m || lectura.Valor > 7.5m))
+                        {
+                            valorClase = "valor-advertencia";
+                            estadoIcono = "⚠️";
+                            estadoTexto = "Fuera de rango";
+                        }
+
+                        var badgeClass = tipoSensor switch
+                        {
+                            "humedad" => "badge-humedad",
+                            "temperatura" => "badge-temperatura",
+                            "ph" => "badge-ph",
+                            "luz" => "badge-luz",
+                            _ => "badge-default"
+                        };
+
+                        <tr class="lectura-row">
+                            <td>
+                                <strong>@lectura.FechaHora.ToString("dd/MM/yyyy")</strong><br>
+                                <small class="text-muted">@lectura.FechaHora.ToString("HH:mm:ss")</small>
+                            </td>
+                            <td>
+                                <strong>@lectura.Sensor?.IdentificadorExterno</strong><br>
+                                <small class="text-muted">@lectura.Sensor?.Finca?.NombreFinca</small>
+                            </td>
+                            <td>
+                                <span class="sensor-badge @badgeClass">
+                                    @lectura.Sensor?.TipoSensor
+                                </span>
+                            </td>
+                            <td class="@valorClase">
+                                @lectura.Valor.ToString("0.##")
+                            </td>
+                            <td>@lectura.Unidad</td>
+                            <td>
+                                @if (lectura.ProcesadoML)
+                                {
+                                    <span class="badge bg-success">✅ Procesado</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">⏳ Pendiente</span>
+                                }
+                            </td>
+                            <td>
+                                <span>@estadoIcono @estadoTexto</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <h5>📭 No hay lecturas disponibles</h5>
+            <p class="mb-0">
+                @if (sensorSeleccionado.HasValue)
+                {
+                    <span>Este sensor aún no tiene lecturas registradas. Usa el botón "Simular Lectura" para generar datos de prueba.</span>
+                }
+                else
+                {
+                    <span>Selecciona un sensor para ver sus lecturas o crea sensores en la sección "Sensores IoT".</span>
+                }
+            </p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        @if (sensorSeleccionado.HasValue && Model.Any())
+        {
+            <text>
+                        // Preparar datos para el gráfico
+                    var labels = [@Html.Raw(string.Join(",", Model.Reverse().Select(l => $"'{l.FechaHora:HH:mm}'")))];
+                    var valores = [@string.Join(",", Model.Reverse().Select(l => l.Valor))];
+                    var unidad = '@Model.FirstOrDefault()?.Unidad';
+
+                    // Crear gráfico
+                    var ctx = document.getElementById('chartLecturas').getContext('2d');
+                    var chart = new Chart(ctx, {
+                        type: 'line',
+                    data: {
+                        labels: labels,
+                    datasets: [{
+                        label: 'Valor (' + unidad + ')',
+                    data: valores,
+                    borderColor: '#4a7c59',
+                    backgroundColor: 'rgba(74, 124, 89, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    borderWidth: 2
+                                }]
+                            },
+                    options: {
+                        responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                        display: true,
+                    position: 'top'
+                                    },
+                    tooltip: {
+                        mode: 'index',
+                    intersect: false
+                                    }
+                                },
+                    scales: {
+                        y: {
+                        beginAtZero: false,
+                    ticks: {
+                        callback: function(value) {
+                                                return value.toFixed(2) + ' ' + unidad;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+            </text>
+        }
+    </script>
+}
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        window.addEventListener('load', function () {
+            alert('✅ @TempData["Success"]');
+        });
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script>
+        window.addEventListener('load', function () {
+            alert('❌ @TempData["Error"]');
+        });
+    </script>
+}
